@@ -46,6 +46,9 @@ func deleteRoll(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	rolls = append(rolls, Roll{ID: "1", ImageNumber: "8", Name: "Spicy Tuna Roll", Ingredients: "Tuna, Chili sauce, Nori, Rice"})
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/sushi", getRolls).Methods("GET")
