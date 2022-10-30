@@ -82,7 +82,16 @@ func updateRoll(w http.ResponseWriter, r *http.Request) {
 
 // Delete
 func deleteRoll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type","application/json")
 
+	params := mux.Vars(r)
+	for index, item := range rolls{
+		if item.ID==params["id"] {
+			rolls = append(rolls[:index], rolls[index+1:]...)
+			break
+		}
+	}
+	json.NewEncoder(w).Encode(rolls)
 }
 
 func main() {
