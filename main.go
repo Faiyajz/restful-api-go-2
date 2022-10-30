@@ -28,7 +28,7 @@ func getRolls(w http.ResponseWriter, r *http.Request) {
 
 // Show
 func getRoll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json") //Set the headers and the response
 
 	params := mux.Vars(r) //mux.Vars() function is setting our params variable from the http response we are passing it.
 	for _, item := range rolls {
@@ -45,7 +45,7 @@ func getRoll(w http.ResponseWriter, r *http.Request) {
 
 // Create
 func createRoll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json") //Set the headers and the response
 
 	var newRoll Roll //create new instance of the Struct Roll
 
@@ -63,7 +63,21 @@ func createRoll(w http.ResponseWriter, r *http.Request) {
 
 // Update
 func updateRoll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json") //Set the headers and the response
 
+	params := mux.Vars(r)
+	for index, item := range rolls {
+		if item.ID == params["id"] {
+			rolls = append(rolls[:index], rolls[index+1:]...)
+
+			var newRoll Roll
+			json.NewDecoder(r.Body).Decode(&newRoll)
+			newRoll.ID = params["id"]
+			rolls = append(rolls, newRoll)
+			json.NewEncoder(w).Encode(newRoll)
+			return
+		}
+	}
 }
 
 // Delete
