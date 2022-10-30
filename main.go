@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -21,16 +22,20 @@ var rolls []Roll
 
 // Index
 func getRolls(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rolls)
+	w.Header().Set("Content-Type", "application/json") //Set the headers and the response
+	json.NewEncoder(w).Encode(rolls)                   //render our rolls slice as json and send it to the response stream.
 }
 
 // Show
 func getRoll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	params := mux.Vars(r)
+	params := mux.Vars(r) //mux.Vars() function is setting our params variable from the http response we are passing it.
 	for _, item := range rolls {
+
+		//when we find the item in our slice where the ID matches the id being sent
+		//through our params variable we should render it as json just like we did
+		//in the getRolls() function and then return.
 		if item.ID == params["id"] {
 			json.NewEncoder(w).Encode(item)
 			return
@@ -40,7 +45,20 @@ func getRoll(w http.ResponseWriter, r *http.Request) {
 
 // Create
 func createRoll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
+	var newRoll Roll //create new instance of the Struct Roll
+
+	json.NewDecoder(r.Body).Decode(&newRoll)
+	//read data from our requests by passing the body of our http request e.g. json.NewDecoder(r.Body)
+	//Call .Decode() passing it a pointer to our newRoll Struct which is an instance of Roll Struct
+	//which allows it to match the json to the appropriate properties of the struct
+
+	newRoll.ID = strconv.Itoa(len(rolls) + 1) //convert int to string
+
+	rolls = append(rolls, newRoll) //add the newRoll to the rolls slice
+
+	json.NewEncoder(w).Encode(newRoll) //sending a response back containing our newRoll
 }
 
 // Update
